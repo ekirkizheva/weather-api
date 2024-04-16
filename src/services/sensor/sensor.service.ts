@@ -6,14 +6,14 @@ import { ISensor } from 'src/interface/sensor.interface';
 @Injectable()
 export class SensorService {
 
-    constructor(@InjectModel('Sensor') private sensorModel:Model<ISensor>) { }
+    constructor(@InjectModel('SensorData') private sensorModel:Model<ISensor>) { }
 
     async getAllSensorsData(): Promise<ISensor[]> {
         return await this.sensorModel.find();
     }
 
-    async getSensorsDataByDevice(device_name: string): Promise<ISensor[]> {
-        return await this.sensorModel.find({device_name});
+    async getSensorsDataByDevice(device_name: string, date: Date): Promise<ISensor[]> {
+        return await this.sensorModel.findOne({device_name, time: new Date(date) });
     }
     
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
 import { SensorService } from 'src/services/sensor/sensor.service';
 
 @Controller('sensor')
@@ -9,16 +9,20 @@ export class SensorController {
     @Get()
     async getSensorData(@Res() response) {
         try {
-            return await this.sensorService.getAllSensorsData();
+            const data = await this.sensorService.getAllSensorsData();
+            return response.status(HttpStatus.OK).json({
+                message: `Data found for all sensors`, data});
         } catch (err) {
             return response.status(err.status).json(err.response);
         }
     }
 
-    @Get(':id')
-    async getSensorDataByDevice(@Res() response, @Param('id') device_name: string) {
+    @Get(':id/:date')
+    async getSensorDataByDevice(@Res() response, @Param('id') device_name: string, @Param('date') date: Date) {
         try {
-            return await this.sensorService.getSensorsDataByDevice(device_name);
+            const data = await this.sensorService.getSensorsDataByDevice(device_name, date);
+            return response.status(HttpStatus.OK).json({
+                message: `Data found for sensor ${device_name}`, data});
         } catch (err) {
             return response.status(err.status).json(err.response);
         }

@@ -8,8 +8,8 @@ import { SensorService } from './services/sensor/sensor.service';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1:27117/WeatherDB'),
-    MongooseModule.forFeature([{ name: 'Sensor', schema: SensorSchema }])],
+    MongooseModule.forRoot('mongodb://127.0.0.1:27117', { dbName: 'WeatherDB' }),
+    MongooseModule.forFeature([{ name: 'SensorData', schema: SensorSchema }])],
   
   controllers: [AppController, SensorController],
   providers: [AppService, SensorService],

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-@Schema()
+@Schema({collection: 'SensorData'})
 export class SensorRecord {
    @Prop()
    device_name: string;
