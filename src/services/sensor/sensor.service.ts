@@ -11,5 +11,9 @@ export class SensorService {
     async getAllSensorsData(): Promise<ISensor[]> {
         return await this.sensorModel.find();
     }
+
+    async getSensorsDataByDevice(device_name: string): Promise<ISensor[]> {
+        return await this.sensorModel.find({device_name});
+    }
     
 }
