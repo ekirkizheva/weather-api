@@ -40,16 +40,10 @@ export class UserService {
         
         const user = await this.userModel.findOneAndUpdate({username}, {last_login: new Date()});
 
-        if (!user) {
+        if (!user || !(await bcrypt.compare(password, user?.password))) {
             throw new UnauthorizedException();
         }
-        
-        const isMatch = await bcrypt.compare(password, user?.password);
-
-        if (!isMatch) {
-          throw new UnauthorizedException();
-        }
-        
+      
         const payload = { sub: user.id, username: user.username, role: user.role };
         
         return {
