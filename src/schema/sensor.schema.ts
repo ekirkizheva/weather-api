@@ -5,7 +5,7 @@ export class SensorRecord {
    device_name: string;
 
    @Prop()
-   time: Date;
+   date: Date;
    
    @Prop()
    precipitation: number;

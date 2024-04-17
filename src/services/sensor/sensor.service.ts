@@ -13,7 +13,40 @@ export class SensorService {
     }
 
     async getSensorsDataByDevice(device_name: string, date: Date): Promise<ISensor[]> {
-        return await this.sensorModel.findOne({device_name, time: new Date(date) });
+        return await this.sensorModel.findOne({device_name, date: new Date(date) });
+    }
+
+    async getMaxTempBetweenDates(startDate: Date, endDate: Date): Promise<ISensor[]> {
+        return await this.sensorModel.aggregate([
+            {
+                $match: { date: {$gte: new Date(startDate), $lte: new Date(endDate)} }
+                
+            }, {
+              $group:
+                {
+                  _id: "$device_name",
+                  max_temp: { $max: "$temp" },
+                  items: { $push: '$$CURRENT' }
+                }
+            }, {
+                $project: {
+                    _id: 0,
+                    device_name: "$_id",
+                    max_temp: 1,
+                    dates_observed: {
+                        $map: {
+                             input: { 
+                                 $filter: { 
+                                   input: '$items', as: 'i', 
+                                   cond: { $eq: [ '$$i.temp', '$max_temp' ] } 
+                                 } 
+                             },
+                             as: 'maxOccur', 
+                             in: '$$maxOccur.date' } 
+                        }
+               }
+            }
+          ]);
     }
     
 }

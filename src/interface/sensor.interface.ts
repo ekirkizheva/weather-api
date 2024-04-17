@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 export interface ISensor extends Document {
     readonly device_name: string;
-    readonly time: Date;
+    readonly date: Date;
     readonly precipitation: number;
     readonly lat: number;
     readonly lon: number;
