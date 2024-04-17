@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-@Schema({collection: 'User'})
+@Schema({collection: 'Users'})
 export class UserRecord {
    @Prop()
    username: string;
