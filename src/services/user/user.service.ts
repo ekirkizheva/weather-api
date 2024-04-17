@@ -38,7 +38,7 @@ export class UserService {
         // ALLOWS FOR INITIAL USER CREATION
         await this.seedUser();
         
-        const user = await this.userModel.findOne({username});
+        const user = await this.userModel.findOneAndUpdate({username}, {last_login: new Date()});
 
         if (!user) {
             throw new UnauthorizedException();
