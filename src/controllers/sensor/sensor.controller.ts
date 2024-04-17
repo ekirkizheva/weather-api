@@ -1,4 +1,5 @@
-import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, Res, UseGuards } from '@nestjs/common';
+import { RoleGuard } from 'src/guards/role.guard';
 import { SensorService } from 'src/services/sensor/sensor.service';
 
 @Controller('sensor')
@@ -30,6 +31,7 @@ export class SensorController {
      * @param date - expects date
      * @returns 
      */
+    @UseGuards(RoleGuard(['student', 'sensor']))
     @Get(':id/:date')
     async getSensorDataByDevice(@Res() response, @Param('id') device_name: string, @Param('date') date: Date) {
         try {
