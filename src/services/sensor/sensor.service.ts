@@ -108,5 +108,27 @@ export class SensorService {
 
       return await this.sensorModel.insertMany([sensor]);
     }
+
+
+    async postSensorDataById(device_name: string, sensor: ISensor[]): Promise<any> {
+      if (!device_name || !sensor) throw new ForbiddenException('Missing or invalid parameters');
+
+      const sensorData = sensor.map(elem => ({...elem, device_name})) as ISensor[];
+
+      if (!sensorData.every(elem => this.isSensorDataValid(elem))) throw new ForbiddenException('Missing or invalid parameters');
+
+      return await this.sensorModel.insertMany(sensorData);
+
+    }
+
+    async putSensorPrecipitation(id: string, data: any) : Promise<any> {
+      if (!id || !data || !data.precipitation) throw new ForbiddenException('Missing or invalid parameters');
+
+      const device_name = (await this.sensorModel.findById(id))?.device_name;
+
+      await this.sensorModel.findOneAndUpdate({_id: id, device_name}, { precipitation: data.precipitation });
+
+      return await this.sensorModel.findById(id);
+    }
     
 }

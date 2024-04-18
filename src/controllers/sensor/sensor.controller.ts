@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
 import { RoleGuard } from 'src/guards/role.guard';
 import { ISensor } from 'src/interface/sensor.interface';
 import { SensorService } from 'src/services/sensor/sensor.service';
@@ -84,8 +84,7 @@ export class SensorController {
     /**
      * This endpoint allows to insert a new sensor reading into the database.
      * 
-     * @param start_date - expects start date of the range
-     * @param end_date - expects end date of the range
+     * @param sensorDto - expects sensor data
      * @returns 
      */
     @UseGuards(RoleGuard(['teacher', 'sensor']))
@@ -99,4 +98,40 @@ export class SensorController {
         }
     }
 
+    /**
+     * This endpoint allows to batch insert sensor readings into the database.
+     * 
+     * @param device_name - expects sensor name
+     * @param sensorDto - expects sensor data
+     * @returns 
+     */
+    @UseGuards(RoleGuard(['teacher', 'sensor']))
+    @Post(':device_name')
+    async postSensorDataById(@Res() response, @Param('device_name') device_name: string, @Body() sensorDto: ISensor[]) {
+        try {
+            const data = await this.sensorService.postSensorDataById(device_name, sensorDto);
+            return response.status(HttpStatus.OK).json({ data});
+        } catch (err) {
+            return response.status(err.status).json(err.response);
+        }
+    }
+
+
+    /**
+     * This endpoint allows to batch insert sensor readings into the database.
+     * 
+     * @param device_name - expects sensor name
+     * @param sensorDto - expects sensor data
+     * @returns 
+     */
+    @UseGuards(RoleGuard(['teacher']))
+    @Put(':id')
+    async putSensorPrecipitation(@Res() response, @Param('id') device_name: string, @Body() updateDto: number) {
+        try {
+            const data = await this.sensorService.putSensorPrecipitation(device_name, updateDto);
+            return response.status(HttpStatus.OK).json({ data});
+        } catch (err) {
+            return response.status(err.status).json(err.response);
+        }
+    }
 }
