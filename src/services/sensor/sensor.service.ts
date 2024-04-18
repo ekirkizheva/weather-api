@@ -19,8 +19,7 @@ export class SensorService {
     async getMaxTempBetweenDates(startDate: Date, endDate: Date): Promise<ISensor[]> {
         return await this.sensorModel.aggregate([
             {
-                $match: { date: {$gte: new Date(startDate), $lte: new Date(endDate)} }
-                
+                $match: { date: {$gte: new Date(startDate), $lte: new Date(endDate)} }  
             }, {
               $group:
                 {
@@ -50,15 +49,9 @@ export class SensorService {
     }
 
     async getMaxPrecipitation(device_name: string): Promise<ISensor[]> {
-    console.log(device_name)
-        const date = new Date().setMonth(new Date().getMonth() - 5);
-
-        console.log(date)
-
         return await this.sensorModel.aggregate([
             {
-                $match: { device_name, date: {$gte: new Date(date)} }
-                
+                $match: { device_name, date: { $gte: new Date(new Date().setMonth(new Date().getMonth() - 5)) } }
             }, {
               $group:
                 {
