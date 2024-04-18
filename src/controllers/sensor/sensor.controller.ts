@@ -1,4 +1,5 @@
-import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, Res, UseGuards } from '@nestjs/common';
+import { RoleGuard } from 'src/guards/role.guard';
 import { SensorService } from 'src/services/sensor/sensor.service';
 
 @Controller('sensor')
@@ -12,6 +13,7 @@ export class SensorController {
      * @param response 
      * @returns 
      */
+    @UseGuards(RoleGuard(['teacher', 'student']))
     @Get()
     async getSensorData(@Res() response) {
         try {
@@ -30,6 +32,7 @@ export class SensorController {
      * @param end_date - expects end date of the range
      * @returns 
      */
+    @UseGuards(RoleGuard(['teacher', 'student']))
     @Get(':device_name/max_precipitation')
     async getMaxPrecipitation (@Res() response, @Param('device_name') device_name: string) {
         try {
@@ -47,6 +50,7 @@ export class SensorController {
      * @param date - expects date
      * @returns 
      */
+    @UseGuards(RoleGuard(['teacher', 'student']))
     @Get(':device_name/:date')
     async getSensorDataByDevice(@Res() response, @Param('device_name') device_name: string, @Param('date') date: Date) {
         try {
@@ -65,6 +69,7 @@ export class SensorController {
      * @param end_date - expects end date of the range
      * @returns 
      */
+    @UseGuards(RoleGuard(['teacher', 'student']))
     @Get('max_temp/:start_date/:end_date')
     async getMaxTempBetweenDates(@Res() response, @Param('start_date') start_date: Date, @Param('end_date') end_date: Date) {
         try {
