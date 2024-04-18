@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
@@ -49,13 +49,13 @@ export class UserService {
         return {
           access_token: await this.jwtService.signAsync(payload),
         };
-      }
+    }
 
-      async postUser(
+    async postUser(
         username: string,
         password: string,
         role: string
-      ): Promise<any> {
+        ): Promise<any> {
 
         if (!username || !password || !role) {
             throw new ForbiddenException('Missing arguments');
@@ -73,5 +73,22 @@ export class UserService {
         }]);
 
         return { result: 'User created' }
-      }
+    }
+
+    async deleteUser(username: string): Promise<any> {
+        if (!username) {
+            throw new ForbiddenException('Missing arguments');
+        }
+
+        const exists = await this.userModel.findOne({username});
+
+        if (!exists) {
+            throw new NotFoundException('User does not exist');
+        }
+
+        await this.userModel.deleteOne({username});
+
+        return { result: 'User deleted' }
+    }
+
 }

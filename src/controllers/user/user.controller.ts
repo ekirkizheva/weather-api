@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
 import { RoleGuard } from 'src/guards/role.guard';
 import { UserService } from 'src/services/user/user.service';
 
@@ -20,12 +20,24 @@ export class UserController {
     /**
      * This endpoint is used to create users
      * 
-     * @param signInDto - expects json payload with username and password. 
+     * @param signInDto - expects json payload with username, password and role. 
      * @returns 
      */
     @UseGuards(RoleGuard(['admin']))
     @Post()
-    postUser(@Body() signInDto: Record<string, string>) {
-        return this.userService.postUser(signInDto.username, signInDto.password, signInDto.role);
+    postUser(@Body() userDto: Record<string, string>) {
+        return this.userService.postUser(userDto.username, userDto.password, userDto.role);
+    }
+
+    /**
+     * This endpoint is used to delete users
+     * 
+     * @param signInDto - expects json payload with username. 
+     * @returns 
+     */
+    @UseGuards(RoleGuard(['admin']))
+    @Delete(':id')
+    deleteUser(@Param('id') id: string) {
+        return this.userService.deleteUser(id);
     }
 }
