@@ -20,7 +20,7 @@ export class UserService {
                 username: 'admin',
                 password: await bcrypt.hash('admin',10),
                 role: 'admin',
-                last_login: new Date()
+                created: new Date()
             }]);
         }
     }
@@ -69,7 +69,7 @@ export class UserService {
             username,
             password: await bcrypt.hash(password,10),
             role,
-            last_login: new Date()
+            created: new Date()
         }]);
 
         return { result: 'User created' }

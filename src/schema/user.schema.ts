@@ -9,6 +9,9 @@ export class UserRecord {
    
    @Prop()
    role: string;
+
+   @Prop()
+   created: Date;
    
    @Prop()
    last_login: Date;
