@@ -107,4 +107,24 @@ export class UserService {
         }
     }
 
+    async putUser(role: string, start_date: Date, end_date: Date): Promise<any> {
+        if (!role || !start_date || !end_date) {
+            throw new ForbiddenException('Missing arguments');
+        }
+
+        const updated = await this.userModel.updateMany({
+            role: { $ne: 'admin'},
+            created: { $gte: new Date(start_date), $lte: new Date(end_date)}
+        }, {
+            role
+        });
+
+        console.log(updated)
+
+        return { 
+            result: 'Users updated', 
+            count: updated.modifiedCount
+        }
+    }
+
 }
