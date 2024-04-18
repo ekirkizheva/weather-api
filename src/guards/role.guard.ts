@@ -39,8 +39,8 @@ export const RoleGuard = (roles: string[]) => {
         }
     
         public extractTokenFromHeader(request: Request & { headers: { authorization: string } }): string | undefined {
-        const [type, token] = request.headers.authorization?.split(' ') ?? [];
-        return type === 'Bearer' ? token : undefined;
+            const [type, token] = request.headers.authorization?.split(' ') ?? [];
+            return type === 'Bearer' ? token : undefined;
         }
     }
   

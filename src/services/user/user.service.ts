@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
@@ -21,7 +21,7 @@ export class UserService {
                 password: await bcrypt.hash('admin',10),
                 role: 'admin',
                 last_login: new Date()
-            }])
+            }]);
         }
     }
 
@@ -31,7 +31,7 @@ export class UserService {
       ): Promise<{ access_token: string }> {
 
         if (!username || !password) {
-            throw new UnauthorizedException('Missing arguments');
+            throw new ForbiddenException('Missing arguments');
         }
 
         // NOT TO BE USED IN PRODUCTION
@@ -49,5 +49,29 @@ export class UserService {
         return {
           access_token: await this.jwtService.signAsync(payload),
         };
+      }
+
+      async postUser(
+        username: string,
+        password: string,
+        role: string
+      ): Promise<any> {
+
+        if (!username || !password || !role) {
+            throw new ForbiddenException('Missing arguments');
+        }
+
+        const exists = await this.userModel.findOne({ username });
+
+        if (exists) throw new ForbiddenException('User already exists')
+
+        await this.userModel.insertMany([{
+            username,
+            password: await bcrypt.hash(password,10),
+            role,
+            last_login: new Date()
+        }]);
+
+        return { result: 'User created' }
       }
 }
