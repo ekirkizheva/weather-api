@@ -1,5 +1,4 @@
-import { Controller, Get, HttpStatus, Param, Res, UseGuards } from '@nestjs/common';
-import { RoleGuard } from 'src/guards/role.guard';
+import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
 import { SensorService } from 'src/services/sensor/sensor.service';
 
 @Controller('sensor')
@@ -25,15 +24,31 @@ export class SensorController {
     }
 
     /**
+     * This endpoint allows users to query max precipitation by last 5 months.
+     * 
+     * @param start_date - expects start date of the range
+     * @param end_date - expects end date of the range
+     * @returns 
+     */
+    @Get(':device_name/max_precipitation')
+    async getMaxPrecipitation (@Res() response, @Param('device_name') device_name: string) {
+        try {
+            const data = await this.sensorService.getMaxPrecipitation(device_name);
+            return response.status(HttpStatus.OK).json({ data});
+        } catch (err) {
+            return response.status(err.status).json(err.response);
+        }
+    }
+
+    /**
      * This endpoint allows users to query sensor data by device name and specific date.
      * 
      * @param id - expects device id (device_name) 
      * @param date - expects date
      * @returns 
      */
-    @UseGuards(RoleGuard(['student', 'sensor']))
-    @Get(':id/:date')
-    async getSensorDataByDevice(@Res() response, @Param('id') device_name: string, @Param('date') date: Date) {
+    @Get(':device_name/:date')
+    async getSensorDataByDevice(@Res() response, @Param('device_name') device_name: string, @Param('date') date: Date) {
         try {
             const data = await this.sensorService.getSensorsDataByDevice(device_name, date);
             return response.status(HttpStatus.OK).json({
@@ -59,4 +74,6 @@ export class SensorController {
             return response.status(err.status).json(err.response);
         }
     }
+
+
 }

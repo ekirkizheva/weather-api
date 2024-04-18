@@ -48,5 +48,43 @@ export class SensorService {
             }
           ]);
     }
+
+    async getMaxPrecipitation(device_name: string): Promise<ISensor[]> {
+    console.log(device_name)
+        const date = new Date().setMonth(new Date().getMonth() - 5);
+
+        console.log(date)
+
+        return await this.sensorModel.aggregate([
+            {
+                $match: { device_name, date: {$gte: new Date(date)} }
+                
+            }, {
+              $group:
+                {
+                  _id: "$device_name",
+                  max_precipitation: { $max: "$precipitation" },
+                  items: { $push: '$$CURRENT' }
+                }
+            }, {
+                $project: {
+                    _id: 0,
+                    device_name: "$_id",
+                    max_precipitation: 1,
+                    dates_observed: {
+                        $map: {
+                             input: { 
+                                 $filter: { 
+                                   input: '$items', as: 'i', 
+                                   cond: { $eq: [ '$$i.precipitation', '$max_precipitation' ] } 
+                                 } 
+                             },
+                             as: 'maxOccur', 
+                             in: '$$maxOccur.date' } 
+                        }
+               }
+            }
+          ]);
+    }
     
 }
