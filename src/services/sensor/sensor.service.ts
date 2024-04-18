@@ -80,7 +80,7 @@ export class SensorService {
           ]);
     }
 
-    async postSensor(sensor: ISensor): Promise<any> {
+    private isSensorDataValid(sensor: ISensor): boolean {
       const expectedProperties = [
         'device_name',
         'date',
@@ -96,7 +96,11 @@ export class SensorService {
         'wind_direction'
       ];
 
-      if (!sensor || !(expectedProperties.every((prop) => Object.keys(sensor).includes(prop)))) throw new ForbiddenException('Missing or invalid parameters');
+      return expectedProperties.every((prop) => Object.keys(sensor).includes(prop))
+    }
+
+    async postSensor(sensor: ISensor): Promise<any> {
+      if (!sensor || !this.isSensorDataValid(sensor)) throw new ForbiddenException('Missing or invalid parameters');
 
       if (sensor.temp > 60 || sensor.temp < -50) throw new ForbiddenException('Abnormal temperature readings');
 
