@@ -91,4 +91,20 @@ export class UserService {
         return { result: 'User deleted' }
     }
 
+    async deleteStudentsBetweenDates(start_date: Date, end_date: Date): Promise<any> {
+        if (!start_date || !end_date) {
+            throw new ForbiddenException('Missing arguments');
+        }
+
+        const deleted_users = await this.userModel.deleteMany({
+            role: 'student',
+            last_login: { $gte: new Date(start_date), $lte: new Date(end_date)}
+        });
+
+        return { 
+            result: 'Users deleted', 
+            count: deleted_users.deletedCount
+        }
+    }
+
 }

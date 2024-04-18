@@ -20,7 +20,7 @@ export class UserController {
     /**
      * This endpoint is used to create users
      * 
-     * @param signInDto - expects json payload with username, password and role. 
+     * @param userDto - expects json payload with username, password and role. 
      * @returns 
      */
     @UseGuards(RoleGuard(['admin']))
@@ -32,12 +32,25 @@ export class UserController {
     /**
      * This endpoint is used to delete users
      * 
-     * @param signInDto - expects json payload with username. 
+     * @param id - expects username. 
      * @returns 
      */
     @UseGuards(RoleGuard(['admin']))
     @Delete(':id')
     deleteUser(@Param('id') id: string) {
         return this.userService.deleteUser(id);
+    }
+
+    /**
+     * This endpoint is used to batch delete students between dates. 
+     * 
+     * @param start_date - expects start date of the range. 
+     * @param end_date - expects end date of the range. 
+     * @returns 
+     */
+    @UseGuards(RoleGuard(['admin']))
+    @Delete('students/:start_date/:end_date')
+    deleteStudentsBetweenDates(@Param('start_date') start_date: Date, @Param('end_date') end_date: Date) {
+        return this.userService.deleteStudentsBetweenDates(start_date, end_date);
     }
 }
