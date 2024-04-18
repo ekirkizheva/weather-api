@@ -1,5 +1,6 @@
-import { Controller, Get, HttpStatus, Param, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { RoleGuard } from 'src/guards/role.guard';
+import { ISensor } from 'src/interface/sensor.interface';
 import { SensorService } from 'src/services/sensor/sensor.service';
 
 @Controller('sensor')
@@ -80,5 +81,22 @@ export class SensorController {
         }
     }
 
+    /**
+     * This endpoint allows to insert a new sensor reading into the database.
+     * 
+     * @param start_date - expects start date of the range
+     * @param end_date - expects end date of the range
+     * @returns 
+     */
+    @UseGuards(RoleGuard(['teacher', 'sensor']))
+    @Post()
+    async postSensor(@Res() response, @Body() sensorDto: ISensor) {
+        try {
+            const data = await this.sensorService.postSensor(sensorDto);
+            return response.status(HttpStatus.OK).json({ data});
+        } catch (err) {
+            return response.status(err.status).json(err.response);
+        }
+    }
 
 }

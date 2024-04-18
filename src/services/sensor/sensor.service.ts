@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ISensor } from 'src/interface/sensor.interface';
@@ -78,6 +78,31 @@ export class SensorService {
                }
             }
           ]);
+    }
+
+    async postSensor(sensor: ISensor): Promise<any> {
+      const expectedProperties = [
+        'device_name',
+        'date',
+        'precipitation',
+        'lat',
+        'lon',
+        'temp',
+        'pressure',
+        'wind_speed',
+        'solar_radiation',
+        'vapor_ressure',
+        'humidity',
+        'wind_direction'
+      ];
+
+      if (!sensor || !(expectedProperties.every((prop) => Object.keys(sensor).includes(prop)))) throw new ForbiddenException('Missing or invalid parameters');
+
+      if (sensor.temp > 60 || sensor.temp < -50) throw new ForbiddenException('Abnormal temperature readings');
+
+      if (sensor.humidity > 100) throw new ForbiddenException('Abnormal humidity readings');
+
+      return await this.sensorModel.insertMany([sensor]);
     }
     
 }
