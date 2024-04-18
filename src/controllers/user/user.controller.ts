@@ -35,7 +35,7 @@ export class UserController {
      * @param id - expects username. 
      * @returns 
      */
-    @UseGuards(RoleGuard(['admin']))
+    @UseGuards(RoleGuard(['admin', 'teacher']))
     @Delete(':id')
     deleteUser(@Param('id') id: string) {
         return this.userService.deleteUser(id);
@@ -48,7 +48,7 @@ export class UserController {
      * @param end_date - expects end date of the range. 
      * @returns 
      */
-    @UseGuards(RoleGuard(['admin']))
+    @UseGuards(RoleGuard(['admin', 'teacher']))
     @Delete('students/:start_date/:end_date')
     deleteStudentsBetweenDates(@Param('start_date') start_date: Date, @Param('end_date') end_date: Date) {
         return this.userService.deleteStudentsBetweenDates(start_date, end_date);
@@ -62,7 +62,7 @@ export class UserController {
      * @param end_date - expects end date of the range. 
      * @returns 
      */
-    @UseGuards(RoleGuard(['admin']))
+    @UseGuards(RoleGuard(['admin', 'teacher']))
     @Put(':role/:start_date/:end_date')
     putUser(@Param('role') role: string, @Param('start_date') start_date: Date, @Param('end_date') end_date: Date) {
         return this.userService.putUser(role, start_date, end_date);
